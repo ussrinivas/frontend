@@ -9,8 +9,7 @@ define([
     'modules/copied-article',
     'utils/global-listeners',
     'utils/local-storage',
-    'utils/mediator',
-    'utils/update-scrollables'
+    'utils/mediator'
 ], function (
     vars,
     ko,
@@ -22,23 +21,8 @@ define([
     copiedArticle,
     globalListeners,
     storage,
-    mediator,
-    updateScrollables
+    mediator
 ) {
-    var updateClipboardScrollable = function (what) {
-        var onClipboard = true;
-        if (what && what.targetGroup) {
-            onClipboard = what.targetGroup.parentType === 'Clipboard';
-        }
-        if (onClipboard) {
-            _.defer(updateScrollables);
-        }
-    };
-
-    mediator.on('collection:updates', updateClipboardScrollable);
-    mediator.on('ui:close', updateClipboardScrollable);
-    mediator.on('ui:omit', updateClipboardScrollable);
-    mediator.on('ui:resize', updateClipboardScrollable);
 
     function Clipboard (params) {
         var listeners = mediator.scope();
@@ -81,9 +65,6 @@ define([
         if (!front) {
             this.uiOpenElement(element);
         }
-        updateClipboardScrollable(article ? {
-            targetGroup: article.group
-        } : null);
     };
 
     Clipboard.prototype.onCopiedChange = function (hasArticle) {

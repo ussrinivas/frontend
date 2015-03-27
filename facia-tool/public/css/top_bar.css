@@ -1,0 +1,156 @@
+body {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    min-height: 100%;
+    max-height: 100%;
+}
+
+header {
+    width: 100%;
+    background: #ffffff;
+    border-bottom: 1px solid #dcdcdc;
+    display: flex;
+    justify-content: flex-end;
+    flex: 0 0 50px;
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    height: calc(100vh - 50px);
+}
+
+.header__group {
+    border-left: 1px solid #dcdcdc;
+    display: flex;
+    align-items: center;
+    height: 50px;
+}
+
+.header__logo {
+    flex: 1;
+}
+
+.header__logo-link {
+    display: flex;
+    align-items: center;
+}
+
+.top-action {
+    order: 99;
+}
+
+.top-action__unit {
+    position: relative;
+    height: 100%;
+}
+
+.top-action__unit i {
+    margin-left: 7px;
+    position: relative;
+    top: 4px;
+}
+
+.top-action__expand {
+    padding: 0 15px;
+    border: 0;
+    margin: 0;
+    width: 100%;
+    outline: none;
+    background-color: #FFF;
+    line-height: 49px;
+}
+
+.top-action__dropdown {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: -1px;
+    top: 100%;
+    z-index: 10;
+    box-shadow: 5px 5px 8px rgba(0, 0, 0, 0.4);
+}
+
+.top-action__dropdown a,
+.top-action__dropdown a:visited,
+.top-action__dropdown a:hover,
+.top-action__dropdown a:active {
+    color: #333;
+}
+
+.header__link {
+    font-size: 32px;
+    letter-spacing: -1px;
+    color: #666666;
+    font-weight: normal;
+    text-transform: lowercase;
+    font-family: Georgia;
+}
+
+.logo {
+    width: 46px;
+    opacity: 0.6;
+    margin-left: 6px;
+}
+
+.login-form {
+    margin-bottom: 0;
+}
+
+.login-form__submit {
+    padding: 0 30px;
+    font-size: 15px;
+    line-height: 50px;
+    color: #fff;
+    border: 0;
+    cursor: pointer;
+    background-color: #2ea3eb;
+}
+
+.login-form__submit:hover {
+    background-color: #148ad2;
+}
+
+.dropdown.closed .dropdown__item {
+    display: none;
+}
+.top-action__dropdown .dropdown__item {
+    margin-bottom: 0;
+    border: 1px solid #DCDCDC;
+    border-top: 0;
+}
+.top-action__dropdown .dropdown__item:hover {
+    background-color: #F0F0F0;
+}
+
+.updating {
+    background: #46c430;
+    color: #ffffff;
+    padding: 0 20px;
+    line-height: 50px;
+}
+
+.secondary-action__button {
+    margin: 0;
+    padding: 0 20px;
+    border: 0;
+    outline: 0;
+    line-height: 49px;
+    background-color: #fff;
+    border-bottom: 1px solid #dcdcdc;
+}
+
+.secondary-action__button:hover {
+    background-color: #DCDCDC;
+}
+
+.action__save {
+    background-color: #f44336;
+}
+
+.action__save:hover {
+    background-color: #e57373;
+}

@@ -11,7 +11,6 @@ define([
     'utils/layout-from-url',
     'utils/sparklines',
     'utils/parse-query-params',
-    'utils/update-scrollables',
     'utils/terminate',
     'modules/list-manager',
     'modules/droppable',
@@ -34,7 +33,6 @@ define([
     layoutFromUrl,
     sparklines,
     parseQueryParams,
-    updateScrollables,
     terminate,
     listManager,
     droppable,
@@ -61,6 +59,7 @@ define([
         };
 
         model.chooseLayout = function () {
+            this.isMainActionVisible(false);
             this.layout.toggleConfigVisible();
         };
         model.saveLayout = function () {
@@ -83,6 +82,10 @@ define([
         model.title = ko.computed(function() {
             return pageConfig.priority + ' fronts';
         }, this);
+
+        model.isMainActionVisible = ko.observable(false);
+
+        model.pending = ko.observable(false);
 
         mediator.on('presser:stale', function (message) {
             model.alert(message);
@@ -150,9 +153,6 @@ define([
                 widgets.register();
                 ko.applyBindings(model);
                 $('.top-button-collections').show();
-
-                updateScrollables();
-                globalListeners.on('resize', updateScrollables);
             });
 
             listManager.init(newItems);

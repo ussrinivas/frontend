@@ -7,17 +7,17 @@ define([
     'modules/list-manager',
     'modules/droppable',
     'utils/fetch-settings',
-    'utils/update-scrollables',
     'utils/clean-clone',
     'utils/clone-with-key',
     'utils/find-first-by-id',
     'utils/logger',
     'utils/terminate',
     'models/group',
+    'models/common-handlers',
     'models/config/front',
     'models/config/collection',
     'models/config/new-items',
-    'models/config/persistence'
+    'models/config/persistence',
 ], function(
     pageConfig,
     ko,
@@ -27,13 +27,13 @@ define([
     listManager,
     droppable,
     fetchSettings,
-    updateScrollables,
     cleanClone,
     cloneWithKey,
     findFirstById,
     logger,
     terminate,
     Group,
+    commonHandlers,
     Front,
     Collection,
     newItems,
@@ -57,6 +57,8 @@ define([
         model.pending = ko.observable();
 
         model.types =  _.pluck(vars.CONST.types, 'name');
+
+        model.isMainActionVisible = ko.observable(false);
 
         model.clipboard = new Group({
             parentType: 'Clipboard',
@@ -159,9 +161,6 @@ define([
 
             }).done(function() {
                 ko.applyBindings(model);
-
-                updateScrollables();
-                window.onresize = updateScrollables;
             });
 
             listManager.init(newItems);

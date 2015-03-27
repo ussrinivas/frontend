@@ -1,0 +1,69 @@
+@(isAuthed: Boolean = false, identity: Option[com.gu.googleauth.UserIdentity] = None, changeLayout: Boolean = true)
+
+<link href="@routes.UncachedAssets.at("css/top_bar.css")" rel="stylesheet">
+
+<header>
+    <div class="header__group header__logo">
+        <a href="/" class="header__logo-link" target="_top">
+            <img class="logo" src="@routes.UncachedAssets.at("images/edit-pen.png")" />
+            <h1 class="header__item header__link">
+                <span data-bind="text: title()">fronts</span>
+                @if(Play.isDev && Configuration.facia.stage.toLowerCase != "dev") { : @Configuration.facia.stage }
+            </h1>
+        </a>
+    </div>
+
+
+    <div class="header__group top-action dropdown closed" data-bind="css: {
+        closed: !isMainActionVisible()
+    }">
+        @if(isAuthed) {
+            <div class="top-action__unit">
+                <button class="dropdown__trigger top-action__expand" data-bind="toggleClick: isMainActionVisible">
+                    <span>@identity.map(_.firstName).getOrElse("") @identity.map(_.lastName).getOrElse("")</span>
+                    <i class="dropdown__trigger__icon" data-bind="svgVariant: 'arrow-down'"></i>
+                </button>
+                <ul class="dropdown__item top-action__dropdown">
+                    <li class="dropdown__item box--primary">
+                        <a href="/https://docs.google.com/a/guardian.co.uk/forms/d/1fA_a1V3--DHjb7ltKYQtDtLfHxsKVl1RIHmMNWafC0I/viewform" target="_blank">Send Feedback</a>
+                    </li>
+                    @if(changeLayout) {
+                        <!-- ko if: !layout.configVisible() -->
+                        <li class="dropdown__item box--primary" data-bind="click: chooseLayout">
+                            <a href="#">Workspace</a>
+                        </li>
+                        <!-- /ko -->
+                    }
+                    <li class="dropdown__item box--primary">
+                        <a href="/logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        } else {
+            <form action="@routes.OAuthLoginController.loginAction()" method="post" class="login-form dropdown__trigger">
+                <input value="Log In" class="login-form__submit" type="submit" id="login-button">
+            </form>
+        }
+    </div>
+
+    @if(changeLayout) {
+        <!-- ko if: layout.configVisible() -->
+        <div style="display: none;" class="header__group secondary-action" data-bind="visible: true">
+            @if(isAuthed) {
+                <div class="secondary-action__unit">
+                    <button class="secondary-action__button action__cancel" data-bind="click: cancelLayout">
+                        Cancel
+                    </button>
+                    <button class="secondary-action__button action__save" data-bind="click: saveLayout">
+                        Save
+                    </button>
+                </div>
+            }
+        </div>
+        <!-- /ko -->
+    }
+
+    <div style="display: none;" class="header__group state__pending" data-bind="visible: pending">
+        <div class="updating">Updating</div>
+    </div>
+</header>

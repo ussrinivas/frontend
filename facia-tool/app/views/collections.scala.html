@@ -2,29 +2,34 @@
 
 @admin_main("fronts", env, Some(priority), isAuthed = true, identity) {
 
-<div style="display: none;" data-bind="visible: true">
+@templates.top_bar(isAuthed = true, identity = identity)
 
-    <div class="alert" data-bind="visible: alert">
-        <span data-bind="text: alert"></span>.
-        <a data-bind="click: pressLiveFront">Retry it?</a>
-        If this persists beyond a few minutes, <a href="https://sites.google.com/a/guardian.co.uk/digital-incident-management/">contact support</a>.
-        <i class="fa fa-remove remove" data-bind="click: clearAlerts"></i>
-    </div>
+<dialog class="alert" style="display: none;" data-bind="visible: alert">
+    <span data-bind="text: alert"></span>.
+    <a data-bind="click: pressLiveFront">Retry it?</a>
+    If this persists beyond a few minutes, <a href="https://sites.google.com/a/guardian.co.uk/digital-incident-management/">contact support</a>.
+    <i class="fa fa-remove remove" data-bind="click: clearAlerts"></i>
+</dialog>
 
-    <div data-bind="template: {
+<dialog class="modalDialog" style="display: none;" data-bind="fadeVisible: modalDialog.isOpen">
+    <!-- ko if: modalDialog.templateName() && modalDialog.isOpen() -->
+        <div class="modalDialog-content" data-bind="template: {
+            name: modalDialog.templateName,
+            data: modalDialog.templateData
+        }"></div>
+    <!-- /ko -->
+</dialog>
+
+<main style="display: none;" data-bind="visible: true,
+    template: {
         name: 'vertical_layout',
         foreach: layout.columns,
         afterAdd: layout.addNewColumn
-    }"></div>
+    }">
+</main>
 
-    <div class="modalDialog" data-bind="fadeVisible: modalDialog.isOpen">
-        <!-- ko if: modalDialog.templateName() && modalDialog.isOpen() -->
-            <div class="modalDialog-content" data-bind="template: {
-                name: modalDialog.templateName,
-                data: modalDialog.templateData
-            }"></div>
-        <!-- /ko -->
-    </div>
+
+<!-- Include knockout templates -->
 
     @templates.vertical_layout()
 
@@ -294,8 +299,6 @@
             <button class="draw-attention" data-bind="click: ok, text: prefix"></button>
         </div>
     </script>
-
-</div>
 
 <script>
     System.import('facia-tool/main').then(function (main) {

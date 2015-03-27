@@ -1,9 +1,5 @@
 <script type="text/html" id="vertical_layout">
-    <div class="column" data-bind="style: {
-        width: style.width(),
-        left: style.left($data),
-        bottom: 0
-    }, css: {
+    <div class="column" data-bind="css: {
         'narrow': style.isNarrow()
     }">
 
@@ -47,7 +43,7 @@
                 <fronts-widget params="position: $index, column: $data"></fronts-widget>
             <!-- /ko -->
             <!-- ko if: isLatest -->
-                <latest-widget params="position: $index, column: $data"></latest-widget>
+                <latest-widget class="scrollable__container" params="position: $index, column: $data"></latest-widget>
             <!-- /ko -->
             <!-- ko if: isTreats -->
                 <fronts-widget params="position: $index, column: $data, mode: 'treats'"></fronts-widget>

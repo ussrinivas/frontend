@@ -36,4 +36,13 @@ define([
             ko.unwrap(value) ? $(element).fadeIn() : $(element).fadeOut();
         }
     };
+
+    ko.bindingHandlers.svgVariant = {
+        init: function(element, valueAccessor) {
+            var value = ko.unwrap(valueAccessor());
+            System.import('composer-components/lib/icons/svg/' + value + '.svg!').then(function (svg) {
+                element.appendChild(svg);
+            });
+        }
+    };
 });

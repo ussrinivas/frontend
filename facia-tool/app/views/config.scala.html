@@ -3,15 +3,13 @@
 
 @admin_main("config", env, Some(priority), isAuthed = true, identity=identity) {
 
-<div style="display: none;" data-bind="
+@templates.top_bar(isAuthed = true, identity = identity, changeLayout = false)
+
+<main class="config-tool" style="display: none;" data-bind="
     visible: true,
     css: {pending: pending}">
 
-    <div class="toolbar" data-bind="visible: true"></div>
-
-    <div class="updating">Updating</div>
-
-    <div class="left-col">
+    <div class="column">
         <div class="col__inner scrollable">
             <div class="title">Containers</div>
             <div class="cnf-collections" data-bind="
@@ -19,7 +17,7 @@
         </div>
     </div>
 
-    <div class="right-col">
+    <div class="column">
         <div class="col__inner scrollable">
             <div class="title">
                 Fronts
@@ -29,6 +27,7 @@
                 template: {name: 'template_front', foreach: fronts}"></div>
         </div>
     </div>
+</main>
 
     <script type="text/html" id="template_minimal_collection">
       <!-- ko if: state.withinPriority -->
@@ -293,8 +292,6 @@
         </div>
       <!-- /ko -->
     </script>
-
-</div>
 
 <script>
     System.import('facia-tool/main').then(function (main) {

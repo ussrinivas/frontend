@@ -8,8 +8,7 @@ define([
     'utils/human-time',
     'utils/mediator',
     'utils/presser',
-    'utils/sparklines',
-    'utils/update-scrollables'
+    'utils/sparklines'
 ], function (
     pageConfig,
     ko,
@@ -20,8 +19,7 @@ define([
     humanTime,
     mediator,
     presser,
-    sparklines,
-    updateScrollables
+    sparklines
 ) {
     function Front (params) {
         var frontId, listeners = mediator.scope();
@@ -191,7 +189,6 @@ define([
         );
 
         this.getFrontAge({alertIfStale: true});
-        updateScrollables();
     };
 
     Front.prototype.getFrontAge = function (opts) {

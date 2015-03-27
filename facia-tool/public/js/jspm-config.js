@@ -11,6 +11,7 @@ System.config({
 System.config({
   "map": {
     "EventEmitter": "npm:wolfy87-eventemitter@4.2.11",
+    "composer-components": "github:guardian/tools-components@1.0.3",
     "css": "github:systemjs/plugin-css@0.1.6",
     "font-awesome": "npm:font-awesome@4.2.0",
     "highcharts": "./components/highcharts/highcharts-custom",
@@ -21,7 +22,10 @@ System.config({
     "numeral": "npm:numeral@1.5.3",
     "raven-js": "npm:raven-js@1.1.17",
     "sinon": "npm:sinon@1.13.0",
+    "svg": "github:cutandpastey/plugin-svg@0.2.0",
     "text": "github:systemjs/plugin-text@0.0.2",
+    "traceur": "github:jmcriffey/bower-traceur@0.0.87",
+    "traceur-runtime": "github:jmcriffey/bower-traceur-runtime@0.0.87",
     "underscore": "npm:underscore@1.7.0",
     "github:jspm/nodelibs-assert@0.1.0": {
       "assert": "npm:assert@1.3.0"

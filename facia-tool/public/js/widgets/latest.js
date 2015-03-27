@@ -2,14 +2,12 @@ define([
     'knockout',
     'models/collections/latest-articles',
     'modules/vars',
-    'utils/mediator',
-    'utils/update-scrollables'
+    'utils/mediator'
 ], function (
     ko,
     LatestArticles,
     vars,
-    mediator,
-    updateScrollables
+    mediator
 ) {
 
     function Latest (params, element) {
@@ -40,13 +38,11 @@ define([
                 self.showingDrafts(false);
             }
         });
-        this.subscriptionOnArticles = this.latestArticles.articles.subscribe(updateScrollables);
 
         mediator.emit('latest:loaded');
     }
 
     Latest.prototype.dispose = function () {
-        this.subscriptionOnArticles.dispose();
         this.subscriptionOnVars.dispose();
     };
 

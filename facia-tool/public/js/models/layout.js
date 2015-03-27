@@ -8,8 +8,7 @@ define([
     'models/layout/column',
     'modules/copied-article',
     'modules/vars',
-    'utils/layout-from-url',
-    'utils/update-scrollables'
+    'utils/layout-from-url'
 ],function (
     ko,
     $,
@@ -20,8 +19,7 @@ define([
     Column,
     copiedArticle,
     vars,
-    layoutFromURL,
-    updateScrollables
+    layoutFromURL
 ) {
     function Layout () {
         this.initialState = {
@@ -135,7 +133,6 @@ define([
                     if (!value) {
                         $element.hide();
                     }
-                    updateScrollables();
                     bindingContext.$data.layout.onConfigVisibilityChange();
                 }
             });
