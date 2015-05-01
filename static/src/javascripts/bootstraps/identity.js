@@ -9,7 +9,6 @@ define([
     'common/modules/identity/validation-email',
     'common/modules/identity/api',
     'common/modules/identity/account-profile',
-    'common/modules/identity/saved-for-later',
     'common/modules/commercial/user-ad-targeting',
     'common/modules/discussion/user-avatars',
     'common/utils/mediator',
