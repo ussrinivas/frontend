@@ -1,13 +1,12 @@
 package com.gu
 
-import sbt._
-import sbt.Keys._
-import play.Play.autoImport._
-import PlayKeys._
-import play._
-import play.twirl.sbt.Import._
+import com.gu.Dependencies._
 import com.typesafe.sbt.web.Import._
-import Dependencies._
+import play.Play.autoImport._
+import play.PlayImport.PlayKeys._
+import play.twirl.sbt.Import._
+import sbt.Keys._
+import sbt._
 
 object Frontend extends Build with Prototypes {
 
@@ -135,6 +134,9 @@ object Frontend extends Build with Prototypes {
   )
 
   val commercial = application("commercial").dependsOn(commonWithTests).aggregate(common)
+    .settings(
+      libraryDependencies ++= Seq(browsermob, browsermobLittleProxy)
+    )
 
   val onward = application("onward").dependsOn(commonWithTests).aggregate(common)
 

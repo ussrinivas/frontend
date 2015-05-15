@@ -1,12 +1,12 @@
 package com.gu
 
+import com.gu.Dependencies._
 import com.gu.versioninfo.VersionInfo
-import sbt._
-import sbt.Keys._
-import com.typesafe.sbt.web.SbtWeb.autoImport._
 import com.typesafe.sbt.SbtNativePackager._
+import com.typesafe.sbt.web.SbtWeb.autoImport._
 import play.twirl.sbt.Import._
-import Dependencies._
+import sbt.Keys._
+import sbt._
 
 trait Prototypes {
   val version = "1-SNAPSHOT"
@@ -51,7 +51,8 @@ trait Prototypes {
     resolvers ++= Seq(
       Resolver.sonatypeRepo("releases"),
       "Guardian Github Releases" at "http://guardian.github.com/maven/repo-releases",
-      "Spy" at "https://files.couchbase.com/maven2/"
+      "Spy" at "https://files.couchbase.com/maven2/",
+      "Local Maven Repository" at Path.userHome.asFile.toURI.toURL + ".m2/repository"
     ),
 
     updateOptions := updateOptions.value.withCachedResolution(true),
