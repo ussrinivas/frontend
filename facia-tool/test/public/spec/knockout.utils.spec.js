@@ -1,8 +1,10 @@
 import ko from 'knockout';
+import {CONST} from 'modules/vars';
 import asObservableProps from 'utils/as-observable-props';
 import firstById from 'utils/find-first-by-id';
 import populate from 'utils/populate-observables';
 import remove from 'utils/remove-by-id';
+import count from 'utils/front-count';
 
 describe('utils/as-observable-props', function () {
     it('generates observables', function () {
@@ -107,5 +109,53 @@ describe('utils/remove-by-id', function () {
             pos: 3
         }]);
         expect(removed.pos).toBe(1);
+    });
+});
+
+describe('utils/front-count', function () {
+    var Front = function (priority) {
+        this.props = {
+            priority: ko.observable(priority)
+        };
+    },
+    fronts = [
+        new Front(),
+        new Front(),
+        new Front('commercial'),
+        new Front('editorial'),
+        new Front('whatever'),
+        new Front('whatever')
+    ];
+
+    it('counts fronts without priority', function () {
+        var result = count(fronts, 'editorial');
+        expect(result).toEqual({
+            count: 3,
+            max: CONST.maxFronts.editorial
+        });
+    });
+
+    it('defaults to editorial priority', function () {
+        var result = count(fronts);
+        expect(result).toEqual({
+            count: 3,
+            max: CONST.maxFronts.editorial
+        });
+    });
+
+    it('counts fronts with any priority', function () {
+        var result = count(fronts, 'commercial');
+        expect(result).toEqual({
+            count: 1,
+            max: CONST.maxFronts.commercial
+        });
+    });
+
+    it('counts fronts with no limits', function () {
+        var result = count(fronts, 'whatever');
+        expect(result).toEqual({
+            count: 2,
+            max: Infinity
+        });
     });
 });
