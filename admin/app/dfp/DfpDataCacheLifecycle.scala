@@ -1,6 +1,7 @@
 package dfp
 
-import common.{AkkaAsync, ExecutionContexts, Jobs}
+import common.{ExecutionContexts, Jobs}
+import expiry.Producer
 import play.api.{Application, GlobalSettings}
 
 import scala.concurrent.Future
@@ -68,16 +69,18 @@ trait DfpDataCacheLifecycle extends GlobalSettings with ExecutionContexts {
   override def onStart(app: Application) {
     super.onStart(app)
 
-    jobs foreach { job =>
-      Jobs.deschedule(job.name)
-      Jobs.scheduleEveryNMinutes(job.name, job.interval) {
-        job.run()
-      }
-    }
+    //    jobs foreach { job =>
+    //      Jobs.deschedule(job.name)
+    //      Jobs.scheduleEveryNMinutes(job.name, job.interval) {
+    //        job.run()
+    //      }
+    //    }
 
-    AkkaAsync {
-      DfpDataCacheJob.refreshAllDfpData()
-    }
+    //    AkkaAsync {
+    //      DfpDataCacheJob.refreshAllDfpData()
+    //    }
+
+    Producer.run()
   }
 
   override def onStop(app: Application) {
