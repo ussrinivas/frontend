@@ -2,7 +2,8 @@
 // extracts test object data to a JSON output file.
 
 // Modules
-var esprima = require("esprima"),
+//
+var esprima = require("esprima",
     glob = require("glob"),
     fs = require("fs");
     mkdirp = require("mkdirp");
