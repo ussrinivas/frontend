@@ -36,7 +36,7 @@ define([
             targetItem = _.last(this.items());
 
             mediator.emit('collection:updates', {
-                sourceItem: sourceItem,
+                sourceItem: sourceItem.article,
                 sourceGroup: sourceItem.group,
                 targetItem: targetItem,
                 targetGroup: this,

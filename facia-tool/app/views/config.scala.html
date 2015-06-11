@@ -1,7 +1,7 @@
 @(env: String, priority: String, identity: Option[com.gu.pandomainauth.model.User])
 @import views.helpers.environment.urlBase
 
-@admin_main("config", env, Some(priority), identity=identity, model=Option("config")) {
+@admin_main("config", env, Some(priority), identity=identity) {
 
 <div style="display: none;" data-bind="
     visible: true,
@@ -10,6 +10,8 @@
     <div class="toolbar" data-bind="visible: true"></div>
 
     <div class="updating">Updating</div>
+
+    @templates.vertical_layout()
 
     <div class="left-col">
         <div class="col__inner scrollable">

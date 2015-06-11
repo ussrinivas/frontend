@@ -44,7 +44,8 @@ class Clipboard extends BaseWidget {
         this.listeners = listeners;
 
         listeners.on('ui:open', this.onUIOpen.bind(this));
-        listeners.on('copied-article:change', this.onCopiedChange.bind(this));
+        this.onCopiedChangeCallback = this.onCopiedChange.bind(this);
+        copiedArticle.on('change', this.onCopiedChangeCallback);
         this.pollArticlesChange(this.saveInStorage.bind(this));
 
         this.hasCopiedArticle = ko.observable(false).extend({ notify: 'always' });
@@ -129,6 +130,7 @@ class Clipboard extends BaseWidget {
     }
 
     dispose() {
+        copiedArticle.off('change', this.onCopiedChangeCallback);
         globalListeners.off('paste', null, this);
         clearInterval(this.pollID);
         this.listeners.dispose();

@@ -474,7 +474,7 @@ define([
             if(!sourceItem || sourceItem.id === this.id()) { return; }
 
             mediator.emit('collection:updates', {
-                sourceItem: sourceItem,
+                sourceItem: sourceItem.article,
                 sourceGroup: sourceItem.group,
                 targetItem: this,
                 targetGroup: this.group,

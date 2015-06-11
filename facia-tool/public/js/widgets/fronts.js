@@ -30,7 +30,7 @@ define([
         var frontId, listeners = mediator.scope();
 
         this.column = params.column;
-        frontId = this.column.initialState.config();
+        frontId = this.column.config();
         this.front = ko.observable(frontId);
         this.previousFront = frontId;
         this.frontAge = ko.observable();
@@ -134,13 +134,13 @@ define([
             model.alertFrontIsStale(false);
         });
 
-        listeners.on('column:change', function (column) {
-            if (model.column === column) {
-                model.front(column.initialState.config());
+        listeners.on('collection:collapse', this.onCollectionCollapse.bind(this));
+
+        this.onColumnConfigChange = this.column.config.subscribe(function (newConfig) {
+            if (newConfig !== model.front()) {
+                model.front(newConfig);
             }
         });
-
-        listeners.on('collection:collapse', this.onCollectionCollapse.bind(this));
 
         this.setIntervals = [];
         this.setTimeouts = [];
@@ -259,7 +259,7 @@ define([
             return;
         }
         this.previousFront = front;
-        this.column.setConfig(front).saveChanges();
+        this.column.setConfig(front);
 
         this.load(front);
 
@@ -320,6 +320,7 @@ define([
 
     Front.prototype.dispose = function () {
         this.listeners.dispose();
+        this.onColumnConfigChange.dispose();
         _.each(this.setIntervals, function (timeout) {
             clearInterval(timeout);
         });

@@ -2,9 +2,12 @@
 import Raven from 'raven-js';
 import Bootstrap from 'modules/bootstrap';
 import 'font-awesome/css/font-awesome.min.css!';
-import {init, update, differs} from 'modules/vars';
 import logger from 'utils/logger';
 import oauthSession from 'utils/oauth-session';
+import Router from 'modules/router';
+import handlers from 'modules/route-handlers';
+
+var router, bootstrap;
 
 function terminate (error) {
     if (error) {
@@ -36,29 +39,19 @@ function registerRaven (res) {
     }
 }
 
-export default function load (ModuleClass) {
-    var module, bootstrap;
-
-    function updateModuleConfig (res) {
-        if (differs(res)) {
-            update(res);
-            module.update(res);
-        }
-    }
-
-    function loadModule (res) {
-        init(res);
-
-        module = new ModuleClass();
-        module.init(bootstrap, res);
-        update(res);
-        bootstrap.every(updateModuleConfig);
+function loadApp (res) {
+    router.load(res).then(function (handler) {
+        // TODO propagate the router to the module, listen for events
+        bootstrap.every(function (updatedRes) {
+            handler.update(updatedRes);
+        });
         oauthSession();
-    }
-
-    bootstrap = new Bootstrap()
-        .onload(checkEnabled)
-        .onload(registerRaven)
-        .onload(loadModule)
-        .onfail(terminate);
+    });
 }
+
+router = new Router(handlers);
+bootstrap = new Bootstrap()
+    .onload(checkEnabled)
+    .onload(registerRaven)
+    .onload(loadApp)
+    .onfail(terminate);

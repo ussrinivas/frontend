@@ -7,7 +7,7 @@ function get (override) {
         }, {
             'type': 'front'
         }],
-        queryParams = parseQueryParams(override),
+        queryParams = _.isObject(override) ? _.clone(override) : parseQueryParams(override),
         configFromURL = queryParams.layout;
 
     if (queryParams.treats === 'please') {

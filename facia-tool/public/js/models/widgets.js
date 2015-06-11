@@ -54,6 +54,12 @@ var register = _.once(() => {
         viewModel: { jspm: 'widgets/clipboard' },
         template: { text: 'widgets/clipboard.html' }
     });
+    ko.components.register('fronts-standalone-clipboard', {
+        viewModel: {
+            createViewModel: (params) => params
+        },
+        template: { text: 'widgets/fronts-standalone-clipboard.html' }
+    });
     ko.components.register('modal-dialog', {
         viewModel: {
             createViewModel: (params) => params.modal

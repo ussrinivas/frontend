@@ -1,4 +1,4 @@
-@(title: String, env: String, priority: Option[String] = None, identity: Option[com.gu.pandomainauth.model.User] = None, model: Option[String] = None)(content: Html)
+@(title: String, env: String, priority: Option[String] = None, identity: Option[com.gu.pandomainauth.model.User] = None)(content: Html)
 
 @import conf.Configuration
 
@@ -26,16 +26,7 @@
 
         <script src="@routes.UncachedAssets.at("jspm_packages/system.js")"></script>
         <script src="@routes.UncachedAssets.at("js/jspm-config.js")"></script>
-
-        @model match {
-            case Some("collections") => {
-                <script>System.import('models/collections/loader');</script>
-            }
-            case Some("config") => {
-                <script>System.import('models/config/loader');</script>
-            }
-            case _ => {}
-        }
+        <script>System.import('main');</script>
     </head>
     <body class="is-authed">
 
@@ -51,13 +42,13 @@
                 </h1>
             </a>
                 <div class="log-in-out top-button"><a href="/logout">Logout</a></div>
-                <div class="top-button-collections" data-bind="if: !!$data.layout">
+                <div class="top-button-collections" style="display: none;" data-bind="visible: true">
                     <!-- ko if: layout.configVisible() -->
-                    <div class="save-layout top-button"><a data-bind="click: saveLayout">Save</a></div>
-                    <div class="cancel-layout top-button"><a data-bind="click: cancelLayout">Cancel</a></div>
+                        <div class="save-layout top-button"><a data-bind="click: saveLayout">Save</a></div>
+                        <div class="cancel-layout top-button"><a data-bind="click: cancelLayout">Cancel</a></div>
                     <!-- /ko -->
                     <!-- ko ifnot: layout.configVisible() -->
-                    <div class="choose-layout top-button"><a data-bind="click: chooseLayout">Workspace</a></div>
+                        <div class="choose-layout top-button"><a data-bind="click: chooseLayout">Workspace</a></div>
                     <!-- /ko -->
                 </div>
             }

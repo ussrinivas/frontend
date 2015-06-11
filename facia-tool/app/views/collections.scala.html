@@ -1,6 +1,6 @@
 @(env: String, priority: String, identity: Option[com.gu.pandomainauth.model.User])
 
-@admin_main("fronts", env, Some(priority), identity, model=Option("collections")) {
+@admin_main("fronts", env, Some(priority), identity) {
 
 <div style="display: none;" data-bind="visible: true">
 
@@ -11,17 +11,11 @@
         <i class="fa fa-remove remove" data-bind="click: clearAlerts"></i>
     </div>
 
-    <div data-bind="template: {
-        name: 'vertical_layout',
-        foreach: layout.columns,
-        afterAdd: layout.addNewColumn
-    }"></div>
+    @templates.vertical_layout()
 
     <div class="modalDialog" data-bind="fadeVisible: modalDialog.isOpen">
         <modal-dialog params="modal: modalDialog"></modal-dialog>
     </div>
-
-    @templates.vertical_layout()
 
     <script type="text/html" id="template_editor">
         <!-- ko if: displayEditor -->
