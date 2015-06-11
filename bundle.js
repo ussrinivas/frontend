@@ -32,7 +32,6 @@ var bundleConfigs = [
     ['bootstraps/football - core - bootstraps/app', 'football'],
     ['bootstraps/preferences - core - bootstraps/app', 'preferences'],
     ['bootstraps/membership - core - bootstraps/app', 'membership'],
-    ['bootstraps/ophan - core', 'ophan'],
     ['bootstraps/admin - core', 'admin'],
     // Odd issue when bundling admin with core: https://github.com/jspm/jspm-cli/issues/806
     // ['bootstraps/admin', 'admin'],
