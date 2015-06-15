@@ -1,7 +1,7 @@
 package dfp
 
 import common.{ExecutionContexts, Jobs}
-import expiry.Producer
+import expiry.{Consumer, Producer}
 import play.api.{Application, GlobalSettings}
 
 import scala.concurrent.Future
@@ -81,6 +81,9 @@ trait DfpDataCacheLifecycle extends GlobalSettings with ExecutionContexts {
     //    }
 
     Producer.run()
+
+    Thread.sleep(3000)
+    Consumer.run()
   }
 
   override def onStop(app: Application) {
