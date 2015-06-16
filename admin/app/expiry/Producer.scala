@@ -17,6 +17,7 @@ import org.joda.time.DateTime
 import tools.Store
 
 import scala.concurrent.{ExecutionContext, Future, Promise}
+import scala.util.control.NonFatal
 import scala.util.{Failure, Success}
 
 object Producer {
@@ -98,20 +99,27 @@ object Producer {
 
   def run()(implicit ec: ExecutionContext): Unit = {
 
-    def stream(tagIds: Seq[String], expired: Boolean): Future[Seq[Future[PutRecordResult]]] = {
+    def stream(tagIds: Seq[String], expiryStatus: Boolean): Future[Seq[Future[PutRecordResult]]] = {
       Future.sequence(tagIds map fetchContentIds) map (_.flatten) map { ids =>
 
-        val hasDuplicates = ids.groupBy(identity).values.exists(_.size > 1)
-        if (hasDuplicates) println("+++++++++++++++++++++++++++++++++++++++++++++++++ duplicates!")
+        val duplicates = ids.groupBy(identity).values.filter(_.size > 1)
+        if (duplicates.nonEmpty) {
+          println("+++++++++++++++++++++++++++++++++++++++++++++++++ duplicates!")
+          println(duplicates.size)
+        }
 
         ids.sorted map { id =>
-          putOntoStream(CommercialStatusUpdate(id, expired))
+          val result = putOntoStream(CommercialStatusUpdate(id, expiryStatus))
+          result onFailure {
+            case NonFatal(e) => println(s"Streaming failed: ${e.getMessage}")
+          }
+          result
         }
       }
     }
 
     val threshold = DateTime.now().minusMonths(2)
-    stream(fetchTagIdsExpiredSince(threshold), expired = true)
-    stream(fetchTagIdsResurrectedSince(threshold), expired = false)
+    stream(fetchTagIdsExpiredSince(threshold), expiryStatus = true)
+    stream(fetchTagIdsResurrectedSince(threshold), expiryStatus = false)
   }
 }

@@ -1,6 +1,6 @@
 package dfp
 
-import common.{ExecutionContexts, Jobs}
+import common.{AkkaAsync, ExecutionContexts, Jobs}
 import expiry.{Consumer, Producer}
 import play.api.{Application, GlobalSettings}
 
@@ -76,9 +76,9 @@ trait DfpDataCacheLifecycle extends GlobalSettings with ExecutionContexts {
     //      }
     //    }
 
-    //AkkaAsync {
-    //  DfpDataCacheJob.refreshAllDfpData()
-    //}
+    AkkaAsync {
+      DfpDataCacheJob.refreshAllDfpData()
+    }
 
     Producer.run()
 

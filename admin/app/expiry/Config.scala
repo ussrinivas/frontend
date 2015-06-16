@@ -1,5 +1,5 @@
 package expiry
 
 object Config {
-  val streamName = "kelvin-expiring-content-test2"
+  val streamName = "kelvin-expiring-content-test"
 }
