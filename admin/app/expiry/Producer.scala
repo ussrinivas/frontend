@@ -7,12 +7,12 @@ import com.amazonaws.regions.Region.getRegion
 import com.amazonaws.regions.Regions.EU_WEST_1
 import com.amazonaws.services.kinesis.AmazonKinesisAsyncClient
 import com.amazonaws.services.kinesis.model.{PutRecordRequest, PutRecordResult}
+import com.gu.contentapi.client.model.{Content, SearchResponse}
 import common.Edition._
 import conf.Configuration.aws.mandatoryCredentials
 import conf.Configuration.commercial.dfpAdFeatureReportKey
 import conf.LiveContentApi
 import dfp.GuLineItem
-import model.Content
 import org.joda.time.DateTime
 import tools.Store
 
@@ -46,7 +46,7 @@ object Producer {
     val adFeatureTags = Store.getDfpPaidForTags(dfpAdFeatureReportKey).paidForTags
     val expired = adFeatureTags filter (_.lineItems.exists(p))
     val (ambiguous, unambiguous) = expired partition (_.matchingCapiTagIds.size > 1)
-    if (ambiguous.nonEmpty) println("++++++++++++++++++++++++++++++++++++++ " + ambiguous.size)
+    if (ambiguous.nonEmpty) println("++++++++++++++++++++++++++++++++ ambiguous: " + ambiguous.size)
     unambiguous flatMap (_.matchingCapiTagIds)
   }
 
@@ -56,15 +56,35 @@ object Producer {
     }
   }
 
-  def fetchTagIdsResurrectedSince(time: DateTime): Seq[String] = ???
+  def fetchTagIdsResurrectedSince(time: DateTime): Seq[String] = {
+    // lifecycle is created > expired > unexpired > expired > ...
+    // so need to know what has been updated in last x mins and did not expire in last x mins
+    fetchTagIds { lineItem =>
+      lineItem.lastModified.isAfter(time) && lineItem.endTime.exists(_.isAfterNow)
+    }
+  }
 
   def fetchContentIds(tagId: String)(implicit ec: ExecutionContext): Future[Seq[String]] = {
-    val query = LiveContentApi.search(defaultEdition).tag(tagId).pageSize(100)
-    val eventualResponse = LiveContentApi.getResponse(query)
-    eventualResponse map { response =>
-      if (response.total > 100) println("++++++++++++++++++++++++++++++++++++++ " + response.total)
-      response.results map (Content(_)) map (_.id)
+
+    def fetch(pageIndex: Int, acc: Seq[String]): Future[Seq[String]] = {
+
+      def fetchPage(i: Int): Future[SearchResponse] = {
+        val query = LiveContentApi.search(defaultEdition).tag(tagId).pageSize(100).page(i)
+        LiveContentApi.getResponse(query)
+      }
+
+      def ids(contents: List[Content]): Seq[String] = contents map (_.id)
+
+      fetchPage(pageIndex) flatMap { response =>
+        response.pages match {
+          case 0 => Future.successful(Nil)
+          case i if i == pageIndex => Future.successful(acc ++ ids(response.results))
+          case _ => fetch(pageIndex + 1, acc ++ ids(response.results))
+        }
+      }
     }
+
+    fetch(1, Nil)
   }
 
   def putOntoStream(update: CommercialStatusUpdate): Future[PutRecordResult] = {
@@ -77,16 +97,21 @@ object Producer {
   }
 
   def run()(implicit ec: ExecutionContext): Unit = {
-    val tagIds = Producer.fetchTagIdsExpiredSince(DateTime.now().minusMonths(2))
-    val contentIds = tagIds map Producer.fetchContentIds
-    Future.sequence(contentIds) map (_.flatten) foreach { ids =>
 
-      val hasDuplicates = ids.groupBy(identity).values.exists(_.size > 1)
-      if (hasDuplicates) println("+++++++++++++++++++++++++++++++++++++++++++++++++++ duplicates!")
+    def stream(tagIds: Seq[String], expired: Boolean): Future[Seq[Future[PutRecordResult]]] = {
+      Future.sequence(tagIds map fetchContentIds) map (_.flatten) map { ids =>
 
-      ids.sorted foreach { id =>
-        putOntoStream(CommercialStatusUpdate(id, expired = true))
+        val hasDuplicates = ids.groupBy(identity).values.exists(_.size > 1)
+        if (hasDuplicates) println("+++++++++++++++++++++++++++++++++++++++++++++++++ duplicates!")
+
+        ids.sorted map { id =>
+          putOntoStream(CommercialStatusUpdate(id, expired))
+        }
       }
     }
+
+    val threshold = DateTime.now().minusMonths(2)
+    stream(fetchTagIdsExpiredSince(threshold), expired = true)
+    stream(fetchTagIdsResurrectedSince(threshold), expired = false)
   }
 }

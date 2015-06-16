@@ -76,9 +76,9 @@ trait DfpDataCacheLifecycle extends GlobalSettings with ExecutionContexts {
     //      }
     //    }
 
-    //    AkkaAsync {
-    //      DfpDataCacheJob.refreshAllDfpData()
-    //    }
+    //AkkaAsync {
+    //  DfpDataCacheJob.refreshAllDfpData()
+    //}
 
     Producer.run()
 
