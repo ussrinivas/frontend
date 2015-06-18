@@ -1,4 +1,5 @@
-module.exports = function(config) {
+/*eslint-env node*/
+module.exports = function (config) {
     config.set({
 
         // base path that will be used to resolve all patterns (eg. files, exclude)
@@ -20,6 +21,7 @@ module.exports = function(config) {
             { pattern: 'javascripts/test/setup.js', included: true },
             { pattern: 'jspm_packages/**/*.js', included: false },
             { pattern: 'javascripts/projects/**/*.js', included: false},
+            { pattern: 'javascripts/bootstraps/**/*.js', included: false},
             { pattern: 'javascripts/es6/**/*.js', included: false},
             { pattern: 'javascripts/vendor/**/*.js', included: false},
             { pattern: 'inline-svgs/**/*.svg', included: false },

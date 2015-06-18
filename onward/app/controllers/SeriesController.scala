@@ -10,11 +10,16 @@ import implicits.Requests
 import conf.LiveContentApi
 import com.gu.contentapi.client.GuardianContentApiError
 import com.gu.contentapi.client.model.{Content => ApiContent}
-import layout.{CollectionEssentials, FaciaContainer}
+import layout.{SeriesDescriptionMetaHeader, MetaDataHeader, CollectionEssentials, FaciaContainer}
 import slices.{Fixed, FixedContainers}
 import LiveContentApi.getResponse
 
-case class Series(id: String, tag: Tag, trails: Seq[Content])
+case class Series(id: String, tag: Tag, trails: Seq[Content]) {
+  lazy val displayName = tag.id match {
+    case "commentisfree/commentisfree" => "opinion"
+    case _ => tag.webTitle
+ }
+}
 
 object SeriesController extends Controller with Logging with Paging with ExecutionContexts with Requests {
   def renderSeriesStories(seriesId: String) = Action.async { implicit request =>
@@ -49,8 +54,9 @@ object SeriesController extends Controller with Logging with Paging with Executi
   private def renderSeriesTrails(series: Series)(implicit request: RequestHeader) = {
     val dataId = "series"
     val componentId = Some("series")
-    val displayName = Some(series.tag.webTitle)
+    val displayName = Some(series.displayName)
     val properties = FrontProperties(series.tag.description, None, None, None, false, None)
+    val header = Option(SeriesDescriptionMetaHeader(series.tag.description))
 
     val config = CollectionConfig.empty.copy(
       apiQuery = Some(series.id), displayName = displayName, href = Some(series.id)
@@ -59,11 +65,12 @@ object SeriesController extends Controller with Logging with Paging with Executi
     val response = () => views.html.fragments.containers.facia_cards.container(
       FaciaContainer(
         1,
-        Fixed(FixedContainers.fixedMediumSlowVII),
+        Fixed(visuallyPleasingContainerForStories(series.trails.length)),
         CollectionConfigWithId(dataId, config),
         CollectionEssentials(series.trails map FaciaContentConvert.frontentContentToFaciaContent take 7, Nil, displayName, None, None, None),
         componentId
-      ).withTimeStamps,
+      ).withTimeStamps
+       .copy(customHeader = header),
       properties
     )(request)
 

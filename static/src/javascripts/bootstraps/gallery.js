@@ -19,7 +19,6 @@ define([
 ) {
 
     var verticallyResponsiveImages = function () {
-
             var setHeight = function () {
                 if (!bonzo(document.body).hasClass('has-overlay')) {
                     var $imgs = $('.js-gallery-img'),
@@ -48,7 +47,7 @@ define([
             mostViewed.manipulationType = 'html';
             mostViewed.endpoint = '/gallery/most-viewed.json';
             mostViewed.ready = function () {
-                mediator.emit('module:gallery-most-popular:loaded', container);
+                mediator.emit('page:new-content', container);
             };
             mostViewed.fetch(container, 'html');
         },

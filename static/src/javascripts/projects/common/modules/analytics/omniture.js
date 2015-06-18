@@ -6,6 +6,7 @@ define([
     'common/utils/_',
     'common/utils/config',
     'common/utils/cookies',
+    'common/utils/date-formats',
     'common/utils/detect',
     'common/utils/mediator',
     'common/utils/pad',
@@ -21,6 +22,7 @@ define([
     _,
     config,
     cookies,
+    dateFormats,
     detect,
     mediator,
     pad,
@@ -78,7 +80,7 @@ define([
         var storeObj,
             delay;
 
-        if (!spec.tag) {
+        if (!spec.validTarget) {
             return;
         }
 
@@ -87,22 +89,22 @@ define([
             // so do session storage rather than an omniture track.
             storeObj = {
                 pageName: this.s.pageName,
-                tag: spec.tag,
+                tag: spec.tag || 'untracked',
                 time: new Date().getTime()
             };
-            try { sessionStorage.setItem(R2_STORAGE_KEY, storeObj.tag); } catch (e) {}
+            try { sessionStorage.setItem(R2_STORAGE_KEY, storeObj.tag); } catch (e) {/**/}
             storage.session.set(NG_STORAGE_KEY, storeObj);
         } else {
             // this is confusing: if s.tl() first param is "true" then it *doesn't* delay.
             delay = spec.samePage ? true : spec.target;
-            this.trackLink(delay, spec.tag);
+            this.trackLink(delay, spec.tag, { customEventProperties: spec.customEventProperties });
         }
     };
 
     Omniture.prototype.populateEventProperties = function (linkName) {
 
         this.s.linkTrackVars = 'channel,prop2,prop3,prop4,prop8,prop9,prop10,prop13,prop25,prop31,prop37,prop47,' +
-                               'prop51,prop61,prop64,prop65,eVar7,eVar37,eVar38,eVar39,eVar50,events';
+                               'prop51,prop61,prop64,prop65,prop74,eVar7,eVar37,eVar38,eVar39,eVar50,events';
         this.s.linkTrackEvents = 'event37';
         this.s.events = 'event37';
         this.s.eVar37 = (config.page.contentType) ? config.page.contentType + ':' + linkName : linkName;
@@ -125,9 +127,14 @@ define([
         this.trackLink(true, linkName);
     };
 
-    Omniture.prototype.trackLink = function (linkObject, linkName) {
+    Omniture.prototype.trackLink = function (linkObject, linkName, options) {
+        options = options || {};
         this.populateEventProperties(linkName);
+        _.assign(this.s, options.customEventProperties);
         this.s.tl(linkObject, 'o', linkName);
+        _.forEach(options.customEventProperties, function (value, key) {
+            delete this.s[key];
+        });
     };
 
     Omniture.prototype.populatePageProperties = function () {
@@ -140,7 +147,8 @@ define([
             mvt      = ab.makeOmnitureTag(document),
             // Tag the identity of this user, which is composed of
             // the omniture visitor id, the ophan browser id, and the frontend-only mvt id.
-            mvtId    = mvtCookie.getMvtFullId();
+            mvtId    = mvtCookie.getMvtFullId(),
+            webPublicationDate = config.page.webPublicationDate;
 
         // http://www.scribd.com/doc/42029685/15/cookieDomainPeriods
         this.s.cookieDomainPeriods = '2';
@@ -173,7 +181,7 @@ define([
         this.s.channel   = this.getChannel();
         this.s.prop4     = config.page.keywords || '';
         this.s.prop6     = config.page.author || '';
-        this.s.prop7     = config.page.webPublicationDate || '';
+        this.s.prop7     = webPublicationDate ? dateFormats.utcDateString(webPublicationDate) : '';
         this.s.prop8     = config.page.pageCode || '';
         this.s.prop9     = config.page.contentType || '';
         this.s.prop10    = config.page.tones || '';
@@ -253,7 +261,7 @@ define([
 
         this.s.prop67    = 'nextgen-served';
 
-        if (config.page.webPublicationDate) {
+        if (webPublicationDate) {
             this.s.prop30 = 'content';
         } else {
             this.s.prop30 = 'non-content';
@@ -291,6 +299,8 @@ define([
             storage.session.remove(R2_STORAGE_KEY);
             storage.session.remove(NG_STORAGE_KEY);
         }
+
+        this.s.prop73 = detect.isFacebookApp() ? 'facebook app' : detect.isTwitterApp() ? 'twitter app' : null;
 
         this.s.prop75 = config.page.wordCount || 0;
         this.s.eVar75 = config.page.wordCount || 0;

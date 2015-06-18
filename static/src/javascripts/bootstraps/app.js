@@ -11,7 +11,8 @@ define([
     'bootstraps/liveblog',
     'bootstraps/media',
     'bootstraps/profile',
-    'bootstraps/sport'
+    'bootstraps/sport',
+    'common/modules/experiments/tests/save-for-later'
 ], function (
     qwery,
     raven,
@@ -25,7 +26,8 @@ define([
     liveBlog,
     media,
     profile,
-    sport
+    sport,
+    SaveForLaterTest
 ) {
 
     var bootstrapContext = function (featureName, boostrap) {
@@ -38,6 +40,12 @@ define([
 
         routes = function () {
             userTiming.mark('App Begin');
+
+            if (config.switches.abSaveForLater
+                && config.page.section === 'identity'
+                && config.page.pageId === '/saved-for-later') {
+                new SaveForLaterTest().variants[0].test();
+            }
 
             bootstrapContext('common', common);
 
@@ -99,16 +107,15 @@ define([
                 bootstrapContext('profile', profile);
             }
 
-            if (config.page.isPreview) {
-                // lazy load this only if on the preview server
-                require(['bootstraps/preview'], function (preview) {
-                    bootstrapContext('preview', preview);
+            if (config.page.isPreferencesPage) {
+                require(['bootstraps/preferences'], function (preferences) {
+                    bootstrapContext('preferences', preferences);
                 });
             }
 
-            if (config.page.pageId === 'preferences') {
-                require(['bootstraps/preferences'], function (preferences) {
-                    bootstrapContext('preferences', preferences);
+            if (config.page.pageId === 'help/accessibility-help') {
+                require(['bootstraps/accessibility'], function (accessibility) {
+                    bootstrapContext('accessibility', accessibility);
                 });
             }
 

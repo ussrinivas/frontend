@@ -7,7 +7,6 @@ import akka.agent.Agent
 import integration.commercial.AdsTest
 import integration.common.{MostPopularTest, SslCertTest}
 import integration.driver.Config
-import integration.facia.ShowMoreTest
 import integration.profile.ProfileCommentsTest
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.remote.{DesiredCapabilities, RemoteWebDriver}
@@ -87,9 +86,7 @@ trait SharedWebDriver extends SuiteMixin { this: Suite =>
 }
 
 class IntegratedTestsSuite extends Suites (
-  new AdsTest,
   new MostPopularTest,
   new SslCertTest,
-  new ShowMoreTest,
   new ProfileCommentsTest) with SingleWebDriver {
 }
